@@ -22,11 +22,11 @@ MonoBehaviour:
     PDF: https://ktane.timwi.de/PDF/Reflex%20Factory.pdf
 
 
-    Reflex Factory (reflexFactoryModule) v1.0.0
+    Reflex Factory (reflexFactoryModule) v1.0.1
 
     Module and Concept by eXish
 
     Twitch Plays supported'
-  version: 1.0.0
+  version: 1.0.1
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 16955ccb826277d4c8145154cb96c18c, type: 3}

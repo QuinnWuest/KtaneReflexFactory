@@ -385,20 +385,14 @@ public class ReflexFactoryScript : MonoBehaviour {
 
     IEnumerator TwitchHandleForcedSolve()
     {
-        while (!lightsOn) yield return true;
-        if (fail)
-        {
-            StopAllCoroutines();
-            GetComponent<KMBombModule>().HandlePass();
-            moduleSolved = true;
-            yield break;
-        }
+        while (!lightsOn || fail) yield return true;
         if (!sequence)
             buttons[0].OnInteract();
         while (stage < 7)
         {
             while (!buttonObjs[1].activeSelf) yield return null;
-            buttons[1].OnInteract();
+            if (!correct)
+                buttons[1].OnInteract();
             if (stage != 7)
                 while (buttonObjs[1].activeSelf) yield return null;
         }

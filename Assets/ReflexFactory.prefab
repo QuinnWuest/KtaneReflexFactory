@@ -437,6 +437,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4644283231683832}
   - component: {fileID: 114328717066032992}
+  - component: {fileID: 114688871682778672}
   m_Layer: 0
   m_Name: StatusLight
   m_TagString: Untagged
@@ -1824,7 +1825,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3987f1b88bfb3aa458faff4fa3b3b6b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audio: {fileID: 114335410585506892}
+  Audio: {fileID: 114335410585506892}
+  Module: {fileID: 114235369766892872}
   bomb: {fileID: 114375059033245494}
   cbMode: {fileID: 114069478927876742}
   buttons:
@@ -1853,6 +1855,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 38e639855537f474db1eb77489ff3caf, type: 2}
   - {fileID: 2100000, guid: ce1a13554723dbc419d5ecfdba8e5444, type: 2}
   - {fileID: 2100000, guid: b5e2bee2f9b130640b674f1973154240, type: 2}
+  FakeStatusLight: {fileID: 114688871682778672}
 --- !u!114 &114069426283256642
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2156,6 +2159,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - KT/Mobile/DiffuseTint
+--- !u!114 &114688871682778672
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1739528931956168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6d6f88a50d4a9743b98ee0fcc18e8c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GreenLight: {fileID: 0}
+  RedLight: {fileID: 0}
+  OffLight: {fileID: 0}
+  PassColor: 1
+  FailColor: 2
+  OffColor: 0
+  MorseTransmitColor: 1
+  Module: {fileID: 0}
 --- !u!114 &114746188655092196
 MonoBehaviour:
   m_ObjectHideFlags: 1

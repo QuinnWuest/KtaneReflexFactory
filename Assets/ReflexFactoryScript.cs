@@ -4,10 +4,12 @@ using UnityEngine;
 using KModkit;
 using System.Text.RegularExpressions;
 using System;
+using System.Reflection;
 
 public class ReflexFactoryScript : MonoBehaviour {
 
-    public KMAudio audio;
+    public KMAudio Audio;
+    public KMBombModule Module;
     public KMAudio.KMAudioRef music;
     public KMBombInfo bomb;
     public KMColorblindMode cbMode;
@@ -16,6 +18,7 @@ public class ReflexFactoryScript : MonoBehaviour {
     public TextMesh display;
     public GameObject[] buttonObjs;
     public Material[] buttonMats;
+    public FakeStatusLight FakeStatusLight;
 
     int[] numOfBtns = new int[8];
     int[] btnTypes = new int[8];
@@ -29,6 +32,7 @@ public class ReflexFactoryScript : MonoBehaviour {
     bool fail;
     bool lightsOn;
     int stage = -1;
+    private Coroutine strikeAnimation;
 
     static int moduleIdCounter = 1;
     int moduleId;
@@ -54,6 +58,9 @@ public class ReflexFactoryScript : MonoBehaviour {
             moves[i] = UnityEngine.Random.Range(0, 8);
             logger += arrows[moves[i]];
         }
+        FakeStatusLight = Instantiate(FakeStatusLight);
+        FakeStatusLight.GetStatusLights(transform);
+        FakeStatusLight.Module = Module;
         Debug.LogFormat("[Reflex Factory #{0}] Arrows: {1}", moduleId, logger);
         Generate();
         GetComponent<KMBombModule>().OnActivate += LightsOn;
@@ -186,7 +193,7 @@ public class ReflexFactoryScript : MonoBehaviour {
             if (index == 0 && !sequence)
             {
                 pressed.AddInteractionPunch();
-                audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
+                Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
                 sequence = true;
                 StartCoroutine(DisplayChanger());
                 StartCoroutine(TestSequence());
@@ -194,7 +201,7 @@ public class ReflexFactoryScript : MonoBehaviour {
             else if (index != 0 && sequence)
             {
                 pressed.AddInteractionPunch();
-                audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
+                Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
                 if (index == 1)
                     correct = true;
                 else
@@ -222,7 +229,7 @@ public class ReflexFactoryScript : MonoBehaviour {
 
     IEnumerator TestSequence()
     {
-        music = audio.HandlePlaySoundAtTransformWithRef("sequence", transform, false);
+        music = Audio.HandlePlaySoundAtTransformWithRef("sequence", transform, false);
         yield return new WaitForSecondsRealtime(3);
         display.text = "";
         for (int i = 0; i < 8; i++)
@@ -279,7 +286,10 @@ public class ReflexFactoryScript : MonoBehaviour {
         }
         yield return new WaitForSecondsRealtime(.2f);
         Debug.LogFormat("[Reflex Factory #{0}] Test sequence passed, module solved", moduleId);
+        if (strikeAnimation != null)
+            StopCoroutine(strikeAnimation);
         GetComponent<KMBombModule>().HandlePass();
+        FakeStatusLight.SetPass();
         moduleSolved = true;
         display.text = "GG";
     }
@@ -307,7 +317,7 @@ public class ReflexFactoryScript : MonoBehaviour {
                 if (!fail)
                     Debug.LogFormat("[Reflex Factory #{0}] The correct button was not pressed in time, resetting test sequence...", moduleId);
                 music.StopSound();
-                audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.Strike, transform);
+                Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.Strike, transform);
                 for (int i = 0; i < 7; i++)
                     display.text += arrows[moves[i]];
                 display.transform.localPosition = new Vector3(-0.015f, 0.0151f, 0.069f);
@@ -317,12 +327,22 @@ public class ReflexFactoryScript : MonoBehaviour {
                 stage = -1;
                 Generate();
                 StopAllCoroutines();
+                if (strikeAnimation != null)
+                    StopCoroutine(strikeAnimation);
+                strikeAnimation = StartCoroutine(StrikeAnimation());
             }
             correct = false;
             fail = false;
             for (int i = 0; i < 4; i++)
                 buttonObjs[i].SetActive(false);
         }
+    }
+
+    IEnumerator StrikeAnimation()
+    {
+        FakeStatusLight.SetStrike();
+        yield return new WaitForSeconds(1f);
+        FakeStatusLight.SetInActive();
     }
 
     //twitch plays
